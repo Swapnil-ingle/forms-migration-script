@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = "com.krishagni.miami.driver.BOConsentFormDeveloper"
+
+jar {
+	baseName = 'miami-form-merger'
+	version = '1.0'
+}
+
+repositories {
+	mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
+}
