@@ -85,7 +85,7 @@ public class TableSourceImpl implements TableSource {
 		List<Table> tableRows = new ArrayList<>();
 		
 		while (rs.next()) {
-			for (TableAttribute attr : getTable().getAttrs()) {
+			for (Attribute attr : getTable().getAttrs()) {
 				Object value = rs.getObject(attr.getColumn());
 				attr.setValue(value);
 				setRowIdx(getRowIdx() + 1);

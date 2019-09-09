@@ -1,6 +1,6 @@
 package com.krishagni.form.merger.db.impl;
 
-public class TableAttribute {
+public class Attribute {
 	private String name;
 
 	private String caption;
@@ -45,8 +45,8 @@ public class TableAttribute {
 		return String.valueOf(getValue());
 	}
 	
-	public static TableAttribute copy(TableAttribute old) {
-		TableAttribute newInstance = new TableAttribute();
+	public static Attribute copy(Attribute old) {
+		Attribute newInstance = new Attribute();
 		
 		newInstance.setCaption(old.getCaption());
 		newInstance.setColumn(old.getColumn());

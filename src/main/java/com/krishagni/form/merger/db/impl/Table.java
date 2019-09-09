@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class Table {
 	private String name;
 	
-	private List<TableAttribute> attrs = new ArrayList<>();
+	private List<Attribute> attrs = new ArrayList<>();
 	
 	public String getName() {
 		return name;
@@ -17,17 +17,17 @@ public class Table {
 		this.name = name;
 	}
 
-	public List<TableAttribute> getAttrs() {
+	public List<Attribute> getAttrs() {
 		return attrs;
 	}
 
-	public void setAttrs(List<TableAttribute> attrs) {
+	public void setAttrs(List<Attribute> attrs) {
 		this.attrs = attrs;
 	}
 	
 	public static Table copy(Table old) {
-		List<TableAttribute> newAttrs = old.getAttrs().stream()
-			.map(TableAttribute::copy)
+		List<Attribute> newAttrs = old.getAttrs().stream()
+			.map(Attribute::copy)
 			.collect(Collectors.toList());
 		
 		Table newInstance = new Table();
@@ -61,13 +61,13 @@ public class Table {
 	
 	public List<String> getHeaders() {
 		return getAttrs().stream()
-				.map(TableAttribute::getName)
+				.map(Attribute::getName)
 				.collect(Collectors.toList());
 	}
 	
 	public String[] getCsv() {
 		return getAttrs().stream()
-				.map(TableAttribute::getValueAsStr)
+				.map(Attribute::getValueAsStr)
 				.collect(Collectors.toList())
 				.toArray(new String[0]);
 	}
@@ -79,7 +79,7 @@ public class Table {
 	
 	private String getColumns() {
 		return getAttrs().stream()
-				.map(TableAttribute::getColumn)
+				.map(Attribute::getColumn)
 				.collect(Collectors.joining(","));
 	}
 }

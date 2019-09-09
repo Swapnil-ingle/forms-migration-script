@@ -32,6 +32,16 @@ public class MergeProperties extends Properties {
 	
 	private static MergeProperties mergeProperties;
 	
+	private MergeProperties() {}
+
+	private static MergeProperties getMergeProperties() {
+		return mergeProperties;
+	}
+
+	private static void setMergeProperties(MergeProperties mergeProperties) {
+		MergeProperties.mergeProperties = mergeProperties;
+	}
+
 	public String getJdbcUrl() {
 		return jdbcUrl;
 	}
@@ -80,16 +90,6 @@ public class MergeProperties extends Properties {
 		this.mappingJson = mappingJson;
 	}
 	
-	private static MergeProperties getMergeProperties() {
-		return mergeProperties;
-	}
-
-	private static void setMergeProperties(MergeProperties mergeProperties) {
-		MergeProperties.mergeProperties = mergeProperties;
-	}
-	
-	private MergeProperties() {}
-
 	public static MergeProperties getInstance() {
 		if (getMergeProperties() == null) {
 			setMergeProperties(new MergeProperties());
