@@ -2,10 +2,10 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
-mainClassName = "com.krishagni.miami.driver.BOConsentFormDeveloper"
+mainClassName = "com.krishagni.form.merger.Driver"
 
 jar {
-	baseName = 'miami-form-merger'
+	baseName = 'form-merger'
 	version = '1.0'
 }
 
@@ -20,4 +20,5 @@ dependencies {
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0.pr2'
 }
