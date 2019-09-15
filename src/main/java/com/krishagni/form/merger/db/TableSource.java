@@ -6,7 +6,7 @@ import java.util.List;
 import com.krishagni.form.merger.db.impl.Table;
 
 public interface TableSource {
-	public List<Table> getRows() throws SQLException;
+	public List<Table> getRows() throws Exception;
 
 	boolean hasRows() throws SQLException;
 

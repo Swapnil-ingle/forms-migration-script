@@ -2,6 +2,7 @@ package com.krishagni.form.merger.db.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,6 +13,8 @@ import com.krishagni.form.merger.db.TableSource;
 import com.krishagni.form.merger.util.MergeProperties;
 
 public class TableSourceImpl implements TableSource {
+	private static final Integer BATCH_SIZE = 25;
+
 	private Connection conn;
 	
 	private Table table;
@@ -20,6 +23,8 @@ public class TableSourceImpl implements TableSource {
 	
 	private Integer totalRows;
 	
+	private PreparedStatement prepSql;
+
 	public Table getTable() {
 		return table;
 	}
@@ -52,9 +57,21 @@ public class TableSourceImpl implements TableSource {
 		this.totalRows = totalRows;
 	}
 
+	public PreparedStatement getPrepSql() {
+		return prepSql;
+	}
+
+	public void setPrepSql(PreparedStatement prepSql) {
+		this.prepSql = prepSql;
+	}
+
 	public TableSourceImpl() throws SQLException {
 		MergeProperties props = MergeProperties.getInstance();
-		this.setConn(DriverManager.getConnection(props.getJdbcUrl(), props.getJdbcUser(), props.getJdbcPwd()));
+		this.setConn(DriverManager.getConnection(
+				props.getDbUrl(),
+				props.getDbUser(),
+				props.getDbPwd())
+				);
 		System.out.println("INFO: Connected to Database!");
 	}
 
@@ -77,26 +94,30 @@ public class TableSourceImpl implements TableSource {
 	}
 
 	@Override
-	public List<Table> getRows() throws SQLException {
-		Statement sql = getConn().createStatement();
-		Integer batchSize = 25;
+	public List<Table> getRows() throws Exception {
+		if (getPrepSql() == null) {
+			setPrepSql(getConn().prepareStatement(table.getQry()));
+		}
 		
-		ResultSet rs = sql.executeQuery(table.getQryWithLimits(getRowIdx(), batchSize));
+		PreparedStatement prepSql = getPrepSql();
+		prepSql.setInt(1, getRowIdx() + BATCH_SIZE);
+		prepSql.setInt(2, getRowIdx());
+
+		ResultSet rs = prepSql.executeQuery();
 		List<Table> tableRows = new ArrayList<>();
 		
 		while (rs.next()) {
 			for (Attribute attr : getTable().getAttrs()) {
 				Object value = rs.getObject(attr.getColumn());
 				attr.setValue(value);
-				setRowIdx(getRowIdx() + 1);
 			}
 			
 			tableRows.add(Table.copy(getTable()));
+			setRowIdx(getRowIdx() + 1);
 			getTable().clearAttrValues();
 		}
 		
 		rs.close();
-		sql.close();
 		
 		return tableRows;
 	}

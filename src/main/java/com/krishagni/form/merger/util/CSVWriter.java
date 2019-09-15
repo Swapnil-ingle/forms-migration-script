@@ -39,7 +39,7 @@ public class CSVWriter {
 	}
 	
 	public CSVWriter(String folder, String file) throws IOException {
-		ensureParentDirExists(folder);
+		MergeFileUtils.ensureDirExists(folder);
 		this.writer = new FileWriter(new File(folder, file), true);
 		this.csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
 	}
@@ -63,12 +63,5 @@ public class CSVWriter {
 	
 	public void flushPrinter() throws IOException {
 		csvPrinter.flush();
-	}
-	
-	private void ensureParentDirExists(String folder) {
-		File parentDir = new File(folder);
-		if (!parentDir.exists()) {
-			parentDir.mkdirs();
-		}
 	}
 }

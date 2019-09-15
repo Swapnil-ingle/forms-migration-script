@@ -10,19 +10,23 @@ public class MergeProperties extends Properties {
 	
 	private final static String FILE_OUTPUT_DIR = "file.outputDir";
 	
-	private final static String JDBC_URL = "jdbc.url";
+	private final static String DB_URL = "db.url";
 	
-	private final static String JDBC_USER = "jdbc.user";
+	private final static String DB_USER = "db.user";
 	
-	private final static String JDBC_PWD = "jdbc.password";
+	private final static String DB_PWD = "db.password";
+
+	private final static String DB_TYPE = "db.type";
 	
 	private final static String MAPPING_JSON = "mapping.json";
 	
-	private String jdbcUrl;
+	private String dbUrl;
+
+	private String dbUser;
 	
-	private String jdbcUser;
+	private String dbPwd;
 	
-	private String jdbcPwd;
+	private String dbType;
 	
 	private String fileOpDir;
 	
@@ -42,28 +46,36 @@ public class MergeProperties extends Properties {
 		MergeProperties.mergeProperties = mergeProperties;
 	}
 
-	public String getJdbcUrl() {
-		return jdbcUrl;
+	public String getDbUrl() {
+		return dbUrl;
 	}
 
-	public void setJdbcUrl(String jdbcUrl) {
-		this.jdbcUrl = jdbcUrl;
+	public void setDbUrl(String dbUrl) {
+		this.dbUrl = dbUrl;
 	}
 
-	public String getJdbcUser() {
-		return jdbcUser;
+	public String getDbUser() {
+		return dbUser;
 	}
 
-	public void setJdbcUser(String jdbcUser) {
-		this.jdbcUser = jdbcUser;
+	public void setDbUser(String dbUser) {
+		this.dbUser = dbUser;
 	}
 
-	public String getJdbcPwd() {
-		return jdbcPwd;
+	public String getDbPwd() {
+		return dbPwd;
 	}
 
-	public void setJdbcPwd(String jdbcPwd) {
-		this.jdbcPwd = jdbcPwd;
+	public void setDbPwd(String dbPwd) {
+		this.dbPwd = dbPwd;
+	}
+
+	public String getDbType() {
+		return dbType;
+	}
+
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
 	}
 
 	public String getFileOpDir() {
@@ -90,6 +102,12 @@ public class MergeProperties extends Properties {
 		this.mappingJson = mappingJson;
 	}
 	
+	public String getOpZipName() {
+		String fileName = getFileName();
+		String nameWoExt = fileName.substring(0, fileName.indexOf('.'));
+		return nameWoExt + ".zip";
+	}
+
 	public static MergeProperties getInstance() {
 		if (getMergeProperties() == null) {
 			setMergeProperties(new MergeProperties());
@@ -107,9 +125,10 @@ public class MergeProperties extends Properties {
 	private MergeProperties toMergeProp(Properties prop) {
 		this.setFileName(prop.getProperty(FILE_NAME));
 		this.setFileOpDir(prop.getProperty(FILE_OUTPUT_DIR));
-		this.setJdbcUrl(prop.getProperty(JDBC_URL));
-		this.setJdbcUser(prop.getProperty(JDBC_USER));
-		this.setJdbcPwd(prop.getProperty(JDBC_PWD));
+		this.setDbUrl(prop.getProperty(DB_URL));
+		this.setDbUser(prop.getProperty(DB_USER));
+		this.setDbPwd(prop.getProperty(DB_PWD));
+		this.setDbType(prop.getProperty(DB_TYPE));
 		this.setMappingJson(prop.getProperty(MAPPING_JSON));
 		
 		return this;

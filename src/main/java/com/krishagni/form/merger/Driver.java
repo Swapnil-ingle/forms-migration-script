@@ -12,6 +12,7 @@ import com.krishagni.form.merger.db.TableSource;
 import com.krishagni.form.merger.db.impl.Table;
 import com.krishagni.form.merger.db.impl.TableSourceImpl;
 import com.krishagni.form.merger.util.CSVWriter;
+import com.krishagni.form.merger.util.MergeFileUtils;
 import com.krishagni.form.merger.util.MergeProperties;
 
 public class Driver {
@@ -21,8 +22,10 @@ public class Driver {
 		String propFile = args[0];
 		try {
 			MergeProperties props = MergeProperties.getInstance().loadPropsFile(propFile);
+			props.setFileOpDir(getFileOpDir(props));
 			TableSource source = getTableSource(props.getMappingJson());
-			CSVWriter writer = new CSVWriter(getFileOpDir(props), props.getFileName());
+
+			CSVWriter writer = new CSVWriter(props.getFileOpDir(), props.getFileName());
 			writer.printHeaders(source.getHeaders());
 			
 			while (source.hasRows()) {
@@ -33,9 +36,10 @@ public class Driver {
 			}
 			
 			writer.closeCsvWriter();
+			MergeFileUtils.zipDir(props.getFileOpDir(), props.getOpZipName());
 			System.out.println("Done!");
 		} catch (Exception e) {
-			System.out.println("Error occured while merging forms. ");
+			System.out.println("Error occured while merging forms.");
 			e.printStackTrace();
 		}
 	}

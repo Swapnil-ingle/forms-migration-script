@@ -9,6 +9,8 @@ public class Attribute {
 
 	private Object value;
 	
+	private AttrFile file;
+
 	public String getName() {
 		return name;
 	}
@@ -38,9 +40,26 @@ public class Attribute {
 	}
 
 	public void setValue(Object value) {
-		this.value = value;
+		// If file is null set value and return
+		if (getFile() == null) {
+			this.value = value;
+			return;
+		}
+
+		// Make File
+		getFile().setData(value);
+		String fileName = getFile().createFile();
+		this.value = fileName;
 	}
 	
+	public AttrFile getFile() {
+		return file;
+	}
+
+	public void setFile(AttrFile file) {
+		this.file = file;
+	}
+
 	public String getValueAsStr() {
 		return String.valueOf(getValue());
 	}
@@ -52,8 +71,13 @@ public class Attribute {
 		newInstance.setColumn(old.getColumn());
 		newInstance.setName(old.getName());
 		newInstance.setValue(old.getValue());
+		newInstance.setFile(old.getFile());
 		
 		return newInstance;
+	}
+
+	public void clearValue() {
+		this.value = null;
 	}
 
 	@Override

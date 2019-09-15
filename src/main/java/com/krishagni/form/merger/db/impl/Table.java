@@ -1,8 +1,11 @@
 package com.krishagni.form.merger.db.impl;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.krishagni.form.merger.util.MergeProperties;
 
 public class Table {
 	private String name;
@@ -39,23 +42,39 @@ public class Table {
 	}
 
 	public String getRowCountQry() {
-		return "select count(*) from " + getName();
+		return String.format("select count(*) from %s", getName());
 	}
 	
-	public String getQryWithLimits(int currRowIdx, int batchSize) {
-		String limit = String.valueOf(currRowIdx + batchSize);
-		String offset = String.valueOf(currRowIdx <= 0 ? 0 : currRowIdx - batchSize);
-		
-		return getQry() + " limit " + limit + " offset " + offset;
+	public String getQry() throws Exception {
+		String db = MergeProperties.getInstance().getDbType();
+
+		if (db.equals("mysql")) {
+			return getMySQLQry();
+		} else if (db.equals("oracle")) {
+			return getOracleQry();
+		}
+
+		System.err.println("Invalid DB type");
+		throw new InvalidParameterException("Invalid DB type");
 	}
-	
-	public String getQry() {
-		return "select " + getColumns()  + " from " + getName();
+
+	private String getMySQLQry() {
+		return String.format(
+				"select %s " +
+				"from %s " +
+				"limit ? offset ?", getColumns(), getName());
 	}
-	
+
+	private String getOracleQry() {
+		return String.format(
+				"select c.* " +
+				"from (select %s, rownum as rnum from %s) c " +
+				"where c.rnum between ? and ?;", getColumns(), getName());
+	}
+
 	public void clearAttrValues() {
 		attrs.forEach(attr -> {
-			attr.setValue(null);
+			attr.clearValue();
 		});
 	}
 	
@@ -77,7 +96,7 @@ public class Table {
 		return "DbTableRowImpl [name=" + name + ", attrs=" + attrs + "]";
 	}
 	
-	private String getColumns() {
+	public String getColumns() {
 		return getAttrs().stream()
 				.map(Attribute::getColumn)
 				.collect(Collectors.joining(","));
