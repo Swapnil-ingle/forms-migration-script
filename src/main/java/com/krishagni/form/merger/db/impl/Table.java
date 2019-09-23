@@ -68,8 +68,8 @@ public class Table {
 	private String getOracleQry() {
 		return String.format(
 				"select c.* " +
-				"from (select %s, rownum as rnum from %s) c " +
-				"where c.rnum between ? and ?;", getColumns(), getName());
+				"from (select %s, ROWNUM as rnum from %s) c " +
+				"where c.rnum between ? and ?", getColumns(), getName());
 	}
 
 	public void clearAttrValues() {

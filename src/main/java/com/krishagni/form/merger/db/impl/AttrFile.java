@@ -57,6 +57,7 @@ public class AttrFile {
 	}
 
 	public Integer getIdx() {
+		++this.idx;
 		return idx;
 	}
 
@@ -97,12 +98,18 @@ public class AttrFile {
 
 	private void writeToFile(File file) {
 		try {
-			if (getType().equalsIgnoreCase("binary")) {
-				MergeFileUtils.copyBlobToFile(file, getData());
-			} else if (getType().equalsIgnoreCase("text")) {
-				FileUtils.writeStringToFile(file, (String) data, StandardCharsets.UTF_8);
-			} else {
-				throw new InvalidParameterException("Invalid file type");
+			switch (getType()) {
+				case "blob":
+					MergeFileUtils.writeBlobToFile(file, getData());
+					break;
+				case "clob":
+					MergeFileUtils.writeClobToFile(file, getData());
+					break;
+				case "text":
+					FileUtils.writeStringToFile(file, (String) data, StandardCharsets.UTF_8);
+					break;
+				default:
+					throw new InvalidParameterException("Invalid file type");
 			}
 		} catch (Exception e) {
 			System.err.println("Error while making file: ");

@@ -88,6 +88,29 @@ public class TableSourceImpl implements TableSource {
 		return totalRows;
 	}
 	
+	private Integer getPageLimit() {
+		return getRowIdx() + BATCH_SIZE;
+	}
+	
+	private PreparedStatement makePrepSql(Integer rowIdx, Integer pageLimit) throws Exception {
+		if (getPrepSql() == null) {
+			setPrepSql(getConn().prepareStatement(table.getQry()));
+		}
+		
+		String dbType = MergeProperties.getInstance().getDbType();
+		PreparedStatement prepSql = getPrepSql();
+		
+		if (dbType.equals("mysql")) {
+			prepSql.setInt(1, getPageLimit());
+			prepSql.setInt(2, getRowIdx());
+		} else if (dbType.equals("oracle")) {
+			prepSql.setInt(1, getRowIdx() + 1);
+			prepSql.setInt(2, getPageLimit());
+		}
+		
+		return prepSql;
+	}
+	
 	@Override
 	public List<String> getHeaders() {
 		return table.getHeaders();
@@ -95,15 +118,8 @@ public class TableSourceImpl implements TableSource {
 
 	@Override
 	public List<Table> getRows() throws Exception {
-		if (getPrepSql() == null) {
-			setPrepSql(getConn().prepareStatement(table.getQry()));
-		}
-		
-		PreparedStatement prepSql = getPrepSql();
-		prepSql.setInt(1, getRowIdx() + BATCH_SIZE);
-		prepSql.setInt(2, getRowIdx());
-
-		ResultSet rs = prepSql.executeQuery();
+		PreparedStatement prepStmt = makePrepSql(getRowIdx(), getPageLimit());
+		ResultSet rs = prepStmt.executeQuery();
 		List<Table> tableRows = new ArrayList<>();
 		
 		while (rs.next()) {

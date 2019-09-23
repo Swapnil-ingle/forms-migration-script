@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -35,12 +38,22 @@ public class MergeFileUtils {
 		}
 	}
 
-	public static void copyBlobToFile(File file, Object data) throws IOException {
+	public static void writeBlobToFile(File file, Object data) throws IOException {
 		ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) data);
 		OutputStream out = new FileOutputStream(file);
 		IOUtils.copy(bis, out);
 		
 		bis.close();
+		out.close();
+	}
+	
+	public static void writeClobToFile(File file, Object data) throws IOException, SQLException {
+		Clob data1 = (Clob) data;
+		InputStream in = data1.getAsciiStream();
+		OutputStream out = new FileOutputStream(file);
+		IOUtils.copy(in, out);
+		
+		in.close();
 		out.close();
 	}
 
